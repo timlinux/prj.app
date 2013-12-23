@@ -9,16 +9,31 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def navigation_render(project=None,
-                      committee=None,
-                      version=None,
-                      the_versions=None,
-                      entry=None,
-                      the_entries=None,
-                      ballot=None,
-                      category=None,
-                      the_categories=None,
-                      is_staff=False):
+def navigation_render(
+        project=None,
+        committee=None,
+        version=None,
+        the_versions=None,
+        entry=None,
+        the_entries=None,
+        ballot=None,
+        category=None,
+        the_categories=None,
+        is_staff=False):
+    """
+
+    :param project:
+    :param committee:
+    :param version:
+    :param the_versions:
+    :param entry:
+    :param the_entries:
+    :param ballot:
+    :param category:
+    :param the_categories:
+    :param is_staff:
+    :return:
+    """
     the_version = None
     the_committee = None
     committees = None

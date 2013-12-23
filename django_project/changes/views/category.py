@@ -288,7 +288,7 @@ class ApproveCategoryView(CategoryMixin, StaffuserRequiredMixin, RedirectView):
 
     def get_redirect_url(self, project_slug, slug):
         category_qs = Category.unapproved_objects.all()
-        category = get_object_or_404(category_qs, slug=slug)
+        category = get_object_or_404(category_qs, category_slug=category_slug)
         category.approved = True
         category.save()
         return reverse(self.pattern_name, kwargs={
