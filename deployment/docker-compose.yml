@@ -88,12 +88,11 @@ web:
     # I dont use volumes_from as I want to use the ro modifier
     - ./static:/home/web/static:ro
     - ./media:/home/web/media:ro
-    - ./logs:/var/log/nginx
   links:
     - uwsgi:uwsgi
   ports:
-    - "80:8080"
-    - "4430:443"
+    - "80:80"
+    - "443:443"
   restart: on-failure:5
 
 # This is the entry point for a development server.
