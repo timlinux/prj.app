@@ -37,11 +37,6 @@ then
 	# Clean up
 	rm -rf docker/django_project.tar.gz docker/Dockerfile-prod
     rm docker/Dockerfile-prod
-
-    #
-    # Now build our nginx image
-    # 
-
 else
 	echo "Production image build aborted."
 fi

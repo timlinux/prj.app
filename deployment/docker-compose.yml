@@ -91,7 +91,7 @@ web:
   links:
     - uwsgi:uwsgi
   ports:
-    - "80:80"
+    - "8888:80"
     - "443:443"
   restart: on-failure:5
 
