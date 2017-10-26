@@ -79,19 +79,18 @@ dbbackups:
 
 # This is normally the main entry point for a production server
 web:
-  # Note you cannot scale if you use conteiner_name
-  container_name: projecta-web
-  image: nginx
+  image: kartoza/nginx-django
   hostname: nginx
   volumes:
-    - ./sites-enabled:/etc/nginx/conf.d:ro
+    # Not needed since I switched to my nginx-django container
+    #- ./sites-enabled:/etc/nginx/conf.d:ro
     # I dont use volumes_from as I want to use the ro modifier
     - ./static:/home/web/static:ro
     - ./media:/home/web/media:ro
   links:
     - uwsgi:uwsgi
   ports:
-    - "8888:80"
+    - "8080:80"
     - "443:443"
   restart: on-failure:5
 
