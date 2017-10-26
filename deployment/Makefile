@@ -253,7 +253,7 @@ mediasync:
 dbsync:
 	@echo
 	@echo "------------------------------------------------------------------"
-	@echo "Syncing database files from live server"
+	@echo "syncing database files from live server"
 	@echo "------------------------------------------------------------------"
 	-@ssh changelog.qgis.org "cd /home/projecta/deployment; make dbbackup"
 	@rsync -av --progress changelog.qgis.org:/home/projecta/deployment/backups/ backups
