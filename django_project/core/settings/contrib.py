@@ -57,6 +57,8 @@ INSTALLED_APPS += (
 MIDDLEWARE_CLASSES += (
     # For rosetta localisation
     'django.middleware.locale.LocaleMiddleware',
+    # automatically adds history for all models
+    'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
 )
 
 DEFAULT_FILE_STORAGE = (
@@ -103,6 +105,7 @@ INSTALLED_APPS += (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.github',
+    'easyaudit',
 )
 
 SOCIALACCOUNT_PROVIDERS = {
