@@ -1,0 +1,207 @@
+
+{% load staticfiles %}
+{% load custom_markup %}
+{% load staticfiles %}
+
+
+{% block css_head %}
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+      <!-- Normalize or reset CSS with your favorite library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+
+  <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.3.0/paper.css">
+    <style>
+
+    @media print {
+        html, body {
+            height: auto;
+            font-size: 10pt;
+            margin: 10mm 10mm 10mm 10mm;
+        }
+        @page {
+            size: A4;
+            margin: 0;
+        }
+    }
+    </style>
+{% endblock css_head %}
+
+
+
+{% block content %}
+    <div class="row page-header" style="border-bottom: 8px solid {{ worksheet.section.project.accent_color }};">
+        <div class="col-lg-3">
+            {% if worksheet.section.project.image_file %}
+                <img src="{{ MEDIA_URL }}{{ worksheet.section.project.image_file }}" style="height: 80px;width: 80px, margin-top:-10px;margin-bottom:20px;">
+            {% endif %}
+        </div>
+        <div class="col-lg-8" style="text-align:right;">
+            <h2><strong>Section : {{ worksheet.section.name }}</strong></h2>
+            <h3 style="margin-top:-10px;margin-bottom:20px;"><i>Module : {{ worksheet.module }}</i></h3>
+        </div>
+    </div>
+
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/info.png" %}" style="height:50px;width:50px"">
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>{{ worksheet.title }}</strong></h3>
+        </div>
+        <div class="col-lg-3">
+        </div>
+    </div>
+
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-12">
+          <p><em>“{{ worksheet.summary_leader }}”</em></p>
+          <p>{{ worksheet.summary_text | base_markdown }}</p>
+          {% if worksheet.summary_image %}
+            <img src="{{ MEDIA_URL }}{{ worksheet.summary_image }}" class="img-responsive img-rounded pull-right" style="width:100%;max-height:300px;">
+          {% endif %}
+        </div>
+    </div>
+
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-7">
+            <h4><strong>You try: </strong></h4>
+            <p><strong><i>Goal: {{ worksheet.exercise_goal }}</i></strong></p>
+            <p>{{ worksheet.exercise_task | base_markdown }}</p>
+        </div>
+        <div style="margin-bottom: 20px" class="details-worksheet col-lg-5 requirement-table">
+
+            {% if requirements.count > 0 %}
+                <table style="margin-top: 30px;" >
+                    <tbody>
+                        <tr style="background-color:#d6e6fb;">
+                            <th style="padding:5px;">Name</th>
+                            <th style="padding:5px;">Expectation</th>
+                        </tr>
+                        {% for requirement in requirements %}
+                            <tr>
+                                <td style="background-color:#f3f9fe;padding:5px;">{{ requirement.title }}</td>
+                                <td style="padding:5px;">{{ requirement.value }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+        {% if worksheet.exercise_image %}
+            <a href="#" class="pop-image">
+                <img id="{{ MEDIA_URL }}{{ worksheet.exercise_image }}" class="img-responsive img-rounded pull-right"
+                     src="{{ MEDIA_URL }}{{ worksheet.exercise_image }}"
+                     style="max-width: 100% !important;"
+                     alt="" />
+            </a>
+        {% endif %}
+    </div>
+
+    {# More about #}
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/info.png" %}" style="height:50px;width:50px"">
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>{{ worksheet.more_about_title }}</strong></h3>
+        </div>
+        <div class="col-lg-3">
+        </div>
+    </div>
+
+    <div class="row details-worksheet" style="margin-top:10px;">
+        <div class="col-lg-8">
+          <p>{{ worksheet.more_about_text | base_markdown }}</p>
+        </div>
+        <div class="col-lg-4">
+            {% if worksheet.more_about_image %}
+                <a href="#" class="pop-image">
+                    <img id="{{ MEDIA_URL }}{{ worksheet.more_about_image }}" class="img-responsive img-rounded pull-right"
+                         src="{{ MEDIA_URL }}{{ worksheet.more_about_image }}"
+                         style="max-width: 100% !important;"
+                         alt="" />
+                </a>
+            {% endif %}
+          </div>
+    </div>
+
+    {# Check your knowledge #}
+    <div class="row details-worksheet question-answer" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }};margin-left:-15px;">
+              <img src="{% static "img/check.png" %}" style="height:50px;width:50px"">
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>Check your knowledge:</strong></h3>
+        </div>
+        <div class="col-lg-3 pull-right">
+        </div>
+    </div>
+
+    <div class="row details-worksheet question-answer" style="margin-top:10px;">
+        <div style="margin-bottom: 20px" class="col-lg-12">
+            <ol type="1">
+                {% for question, answers in questions.items %}
+                    <div class="row">
+                        <li style="margin-bottom: 20px">
+                            <div class="col-lg-10">
+                              <strong>{{ question.question }}:</strong>
+                            </div>
+                            <div class="col-lg-2">
+                            </div>
+                        </li>
+                    </div>
+                    <ol type="a">
+                        {% for answer in answers %}
+                            <li style="margin-bottom: 10px">
+                                    {{ answer.answer }}
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+
+    {# Further reading #}
+    <div class="row details-worksheet further-reading" style="margin-top:10px;">
+        <div class="col-lg-1">
+          <div class="pull-left" style="background-color:{{ worksheet.section.project.accent_color }}; height:50px;width:50px; margin-left:-15px;">
+              <span class="glyphicon glyphicon-list-alt fa-3x" style="color:white"></span>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <h3 class="custom-heading" style="margin-left:-40px"><strong>Further reading: </strong></h3>
+        </div>
+        <div class="col-lg-3 pull-right">
+        </div>
+    </div>
+
+    <div class="row details-worksheet further-reading" style="margin-top:10px;">
+        <div class="details-worksheet col-lg-12" style="margin-bottom: 20px">
+            <ul>
+                {% for info in further_reading %}
+                    <li>
+                        {{ info.text }}
+                        {% if info.link %}
+                            <a target="_blank" href="{{ info.link }}">{{ info.link }}</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}
