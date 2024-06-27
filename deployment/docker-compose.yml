@@ -47,6 +47,8 @@ services:
       - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
       - VIRTUAL_HOST=${VIRTUAL_HOST}
       - VIRTUAL_PORT=${VIRTUAL_PORT}
+      - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_RATE=${SENTRY_RATE}
     volumes:
       - static-data:/home/web/static:rw
       - media-data:/home/web/media:rw

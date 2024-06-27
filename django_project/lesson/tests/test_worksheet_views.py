@@ -229,6 +229,7 @@ class TestViews(TestCase):
         response = self.client.get(reverse('worksheet-module-answers-print',
                                            kwargs=self.kwargs_worksheet_full))
         self.assertEqual(response.status_code, 200)
+
         self.assertEquals(
             response.get('Content-Disposition'),
             'filename=Test Question Answer.pdf'
@@ -322,6 +323,13 @@ class TestViews(TestCase):
         self.test_worksheet.more_about_image = self.image_uploaded
         self.test_worksheet.license = self.license
         self.test_worksheet.save()
+
+        # Request without parameter should be handled
+        response_without_parm = self.client.get(reverse(
+            'download-multiple-worksheets', kwargs=self.kwargs_project
+        ))
+        self.assertEqual(response_without_parm.status_code, 200)
+
         worksheet_obj = ('?worksheet={%22' +
                          str(self.test_worksheet.pk) +
                          '%22:%221.1%22}')

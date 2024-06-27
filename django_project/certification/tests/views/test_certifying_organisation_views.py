@@ -106,7 +106,20 @@ class TestCertifyingOrganisationView(TestCase):
                         'project_slug': self.project.slug
                     }) + '?ready=False&approved=False')
         self.assertEqual(response.status_code, 200)
+
+        # Empty and invalid parameters should be handled
+        # and return the same result as above
+        response_param_ivalid = client.get(
+            reverse('certifyingorganisation-list-json',
+                    kwargs={
+                        'project_slug': self.project.slug
+                    }) + '?ready=no&approved=')
+        self.assertEqual(response_param_ivalid.status_code, 200)
+
         json_response = response.json()
+        json_response_invalid_param = response_param_ivalid.json()
+        self.assertEqual(json_response, json_response_invalid_param)
+
         self.assertEqual(
             len(json_response['data']),
             1

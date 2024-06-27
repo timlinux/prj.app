@@ -843,13 +843,26 @@ class CertifyingOrganisationJson(BaseDatatableView):
             return super(CertifyingOrganisationJson, self
                          ).render_column(row, column)
 
+    def _validate_param(self, param_value):
+        """
+        Handle empty or invalid param value
+        """
+        try:
+            param = ast.literal_eval(param_value)
+            if not isinstance(param, bool):
+                param = False
+        except (ValueError, SyntaxError):
+            param = False
+        return param
+
+
     def filter_queryset(self, qs):
         search = self.request.GET.get('search[value]', None)
-        ready = ast.literal_eval(
+        ready = self._validate_param(
             self.request.GET.get('ready', 'False'))
-        approved = ast.literal_eval(
+        approved = self._validate_param(
             self.request.GET.get('approved', 'False'))
-        rejected = ast.literal_eval(
+        rejected = self._validate_param(
             self.request.GET.get('rejected', 'False'))
 
         qs = qs.filter(rejected=rejected, approved=approved)

@@ -503,7 +503,7 @@ def download_multiple_worksheet(request, **kwargs):
 
     project_slug = kwargs.pop('project_slug')
     project = Project.objects.get(slug=project_slug)
-    worksheets_obj = request.GET.get('worksheet')
+    worksheets_obj = request.GET.get('worksheet', '{}')
     worksheets = json.loads(worksheets_obj)
 
     def get_context_data(pk):
