@@ -224,25 +224,25 @@ class Command(BaseCommand):
         self.stdout.write('Entry\'s Media')
         self.stdout.write('-' * 30)
         self.stdout.write(
-            f'All Entry media : {len(all_entries_media)} files '
+            f'All Entry media: {len(all_entries_media)} files '
             f'{round(all_entries_size / 1000000, 2)} MB.\n'
-            f'Unused Entry media : {len(unused_entries_media)} files '
+            f'Unused Entry media: {len(unused_entries_media)} files '
             f'{round(unused_entries_size / 1000000, 2)} MB.'
         )
         self.stdout.write('\n')
         self.stdout.write('All Media (exclude Entry model instance)')
         self.stdout.write('-' * 30)
         self.stdout.write(
-            f'All Entry media : {len(all_media)} files '
+            f'All Entry media: {len(all_media)} files '
             f'{round(all_media_size / 1000000, 2)} MB.\n'
-            f'Unused Entry media : {len(unused_media)} files '
+            f'Unused Entry media: {len(unused_media)} files '
             f'{round(unused_media_size / 1000000, 2)} MB.'
         )
 
         confirmation = get_input(
             f'\nDelete unused media images and files: '
             f'{len(unused_entries_media) + len(unused_media)} files, '
-            f'{round((unused_entries_size + unused_media_size)/1000000, 2)} '
+            f'{round((unused_entries_size + unused_media_size) / 1000000, 2)} '
             f'MB? [Y] '
         )
 

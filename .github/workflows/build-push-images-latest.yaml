@@ -93,10 +93,10 @@ jobs:
           EOF
           docker cp projecta_devweb_1:/home/web/django_project/coverage.xml ../coverage.xml
 
-      - name: Upload coverage to codecov
-        uses: codecov/codecov-action@v2
-        with:
-          fail_ci_if_error: true
+      # - name: Upload coverage to codecov
+      #   uses: codecov/codecov-action@v2
+      #   with:
+      #     fail_ci_if_error: true
 
   docker-builder:
     # Only push if PR happens in the same repo
