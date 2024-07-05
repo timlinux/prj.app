@@ -648,6 +648,183 @@ class VersionDownload(CustomStaffuserRequiredMixin, VersionMixin, DetailView):
         return self.queryset
 
 
+class VersionDownloadMd(VersionMixin, DetailView):
+    """View to allow users to download Version page in Markdown format."""
+    template_name = 'version/detail-content-md.html'
+
+    def get_context_data(self, **kwargs):
+        """Get the context data which is passed to a template.
+
+        :param kwargs: Any arguments to pass to the superclass.
+        :type kwargs: dict
+
+        :returns: Context data which will be passed to the template.
+        :rtype: dict
+        """
+        context = super(VersionDownloadMd, self).get_context_data(**kwargs)
+        versions = self.get_object()
+        sponsors = {}
+
+        # group sponsors by sponsorship level
+        if versions.sponsors():
+            for sponsor in versions.sponsors():
+                if sponsor.sponsorship_level not in sponsors:
+                    sponsors[sponsor.sponsorship_level] = []
+
+                sponsors[sponsor.sponsorship_level].append(sponsor.sponsor)
+
+        context['sponsors'] = sponsors
+        return context
+
+    def render_to_response(self, context, **response_kwargs):
+        """Returns a Markdown document for a project Version page.
+
+        :param context:
+        :type context: dict
+
+        :param response_kwargs: Keyword Arguments
+        :param response_kwargs: dict
+
+        :returns: a Markdown document for a project Version page.
+        :rtype: HttpResponse
+        """
+        version_obj = context.get('version')
+        # set the context flag for 'md_download'
+        context['md_download'] = True
+        # render the template
+        document = self.response_class(
+            request=self.request,
+            template=self.get_template_names(),
+            context=context,
+            **response_kwargs
+        )
+
+        # convert the html to markdown
+        converted_doc = pypandoc.convert(
+            document.rendered_content.encode('utf8', 'ignore'),
+            'md', format='html', extra_args=['--no-wrap'])
+        converted_doc = converted_doc.replace('/media/images/', 'images/')
+
+        # prepare the ZIP file
+        zip_file = self._prepare_zip_archive(converted_doc, version_obj)
+
+        # Grab the ZIP file from memory, make response with correct MIME-type
+        response = HttpResponse(
+            zip_file.getvalue(), content_type="application/x-zip-compressed")
+        # ..and correct content-disposition
+        response['Content-Disposition'] = (
+            'attachment; filename="{}-{}.zip"'.format(
+                version_obj.project.name, version_obj.name)
+        )
+
+        return response
+
+    def _convert_headers(self, markdown_content):
+        """
+        Convert underlined sections in a Markdown document to proper headers.
+
+        Sections underlined with '=' become first-level headers '#'
+        Sections underlined with '-' become second-level headers '##'
+
+        Args:
+            markdown_content (str): The original Markdown content.
+
+        Returns:
+            str: The transformed Markdown content with headers.
+        """
+        # Define patterns for first and second-level headers
+        first_level_pattern = r'^(.*)\n=+\n'
+        second_level_pattern = r'^(.*)\n-+\n'
+
+        # Replace first-level underlined sections with '#'
+        markdown_content = re.sub(
+            first_level_pattern,
+            r'# \1\n',
+            markdown_content,
+            flags=re.MULTILINE
+        )
+
+        # Replace second-level underlined sections with '##'
+        markdown_content = re.sub(
+            second_level_pattern,
+            r'## \1\n',
+            markdown_content,
+            flags=re.MULTILINE
+        )
+
+        return markdown_content
+
+    # noinspection PyMethodMayBeStatic
+    def _prepare_zip_archive(self, document, version_obj):
+        """Prepare a ZIP file with the document and referenced images.
+
+        :param document:
+        :param version_obj: Instance of a version object.
+
+        :returns temporary path for the created zip file
+        :rtype: string
+        """
+        # create in memory file-like object
+        temp_path = BytesIO()
+
+        # Convert headers
+        document = self._convert_headers(document)
+        # Remove CSS styles and classes
+        document = re.sub(r'\{.*?\}', '', document)
+        # Regular expression pattern for Markdown image syntax
+        pattern = re.compile(r'!\[.*?\]\((.*?)\)')
+        # Find all matches
+        images = pattern.findall(document)
+        if not images:
+            images = []
+
+        # create the ZIP file
+        with zipfile.ZipFile(temp_path, 'w') as zip_file:
+            # write all of the image files (read from disk)
+            for image in images:
+                try:
+                    image_url = '{}/{}'.format(settings.MEDIA_ROOT, image)
+                    zip_file.write(
+                        image_url,
+                        '{0}'.format(image)
+                    )
+                except FileNotFoundError:
+                    pass
+            # write the actual Markdown document
+            zip_file.writestr(
+                'index.md',
+                document)
+        return temp_path
+
+    def get_queryset(self):
+        """Get the queryset for download.
+
+        This will search a specific version within a project.
+        Thus it will not raise duplicates when there is
+        another same version name from another project.
+
+        :returns: A queryset which is filtered to only show Version
+        from specific project.
+        :rtype: QuerySet
+        :raises: Http404
+        """
+
+        if self.queryset is None:
+            project_slug = self.kwargs.get('project_slug', None)
+            slug = self.kwargs.get('slug', None)
+            if project_slug and slug:
+                try:
+                    project = Project.objects.get(slug=project_slug)
+                    queryset = Version.objects.filter(
+                        project=project, slug=slug)
+                    return queryset
+                except (Project.DoesNotExist, Version.DoesNotExist):
+                    raise Http404('Sorry! We could not find your version!')
+            else:
+                raise Http404('Sorry! We could not find your version!')
+        return self.queryset
+
+
 class VersionDownloadGnu(VersionMixin, DetailView):
     """A tabular list style view for a Version."""
     context_object_name = 'version'

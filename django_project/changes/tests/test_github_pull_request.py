@@ -295,10 +295,10 @@ class TestGithubDownloadImage(TestCase):
         rgx = ('<img.*?https://user-images.githubusercontent.com/40058076/'
                '106831433-dea95b80-66ca-11eb-8026-6823084d726e.png.*?/>')
         is_match = re.match(rgx, entry.description)
+        desc = entry.description
         self.assertIsNone(
             is_match,
-            msg=f'image regex pattern {rgx} must be not in description '
-                f'{entry.description}'
+            msg=f'image regex pattern {rgx} must be not in description {desc}'
         )
 
         # check if another image is in description

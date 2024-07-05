@@ -37,6 +37,12 @@
                     </a>
                 {% endif %}
                 <a class="btn btn-default btn-mini tooltip-toggle"
+                   data-title="Download as Markdown"
+                   href='{% url 'version-download-md' project_slug=version.project.slug slug=version.slug %}'>
+                    <span class="glyphicon glyphicon-download"></span>
+                    <span style="font-size: 7pt;">M D</span>
+                </a>
+                <a class="btn btn-default btn-mini tooltip-toggle"
                    data-title="Download as GNU Changelog" data-toggle="tooltip"
                    href='{% url 'version-download-gnu' project_slug=version.project.slug slug=version.slug %}'>
                     <span class="glyphicon glyphicon-list-alt"></span>
